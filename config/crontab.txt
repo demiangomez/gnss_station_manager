@@ -1,0 +1,8 @@
+#
+# m h  dom mon dow   command
+@reboot         /home/pi/scripts/config/initialize.sh
+@daily          /home/pi/scripts/autodelete/autodelete.sh
+@hourly         /home/pi/scripts/FTP/ftp_push.sh
+0 1-23/2 * * *  /home/pi/scripts/FTP/ftp_pull.sh
+59 23 * * *     /home/pi/scripts/log/log_daily.sh
+*/10 * * * *    /home/pi/scripts/status/status_update.sh

@@ -1,0 +1,138 @@
+#!/bin/bash
+#
+# Este script tiene toda la configuracion de directorios en un solo lugar.
+# Para ser invocado usando source de forma de tener toda las variables de entorno disponibles
+#
+
+##########################
+# CONFIGURACION DE GENERAL
+##########################
+
+# ubicacion de los scripts a ejecutar
+SCRIPTS_BASE_PATH="<BASE>"
+# nombre de la estacion
+STNM=<STNM>
+MET_SERIAL=<MET_SERIAL>
+
+######################
+# CONFIGURACION DE FTP
+######################
+
+# directorio de archivos
+FTP_LOCAL_PATH="<FTP_BASE>/${STNM}"
+FTP_LOCAL_LIST="${SCRIPTS_BASE_PATH}/FTP/list_local"
+FTP_UPLOADED_LIST="${SCRIPTS_BASE_PATH}/FTP/list_uploaded"
+
+FTP_PARALLEL_PULL=2
+
+FTP_RECEIVER_IP="192.168.1.2"
+FTP_RECEIVER_PATH="/"
+FTP_RECEIVER_USER="anonymous"
+FTP_RECEIVER_PASS=""
+FTP_RECEIVER_FILE_EXTENTION="T00"
+
+FTP_SERVER_IP="<FTP_IP>"
+FTP_SERVER_PATH="<FTP_PATH>"
+FTP_SERVER_USER="<FTP_USER>"
+FTP_SERVER_PASS="<FTP_PASS>"
+FTP_SERVER_FILE_EXTENTION="T00|gz"
+
+#############################
+# CONFIGURACION DE AUTODELETE
+#############################
+
+# directorio objetivo
+AUTODELETE_PATH="${FTP_LOCAL_PATH}"
+
+# Tamano maximo en MB
+AUTODELETE_MAX_SIZE=4000
+
+###########################
+# CONFIGURACION DE LOGFILES
+###########################
+
+# ubicacion de los archivos relacionados con log
+LOG_PATH="${SCRIPTS_BASE_PATH}/log"
+
+# archivo log de los uploads de FTP
+LOG_FTP_UPLOAD="$LOG_PATH/log_ftp_push.txt"
+# archivo log de los pull del receptor
+LOG_FTP_DOWNLOAD="$LOG_PATH/log_ftp_pull.txt"
+
+# log para NTRIP
+LOG_NTRIP_v2_3="$LOG_PATH/log_ntrip-v2_3.txt"
+LOG_NTRIP_v3_0="$LOG_PATH/log_ntrip-v3_0.txt"
+
+# log del status del sistema
+LOG_STATUS="$LOG_PATH/log_status.txt"
+
+# log de autodelete y de initialize
+LOG_AUTODELETE="$LOG_PATH/log_autodelete.txt"
+LOG_INITIALIZE="$LOG_PATH/log_initialize.txt"
+
+########################
+# CONFIGURACION DE NTRIP
+########################
+
+# directorio de NTRIP
+NTRIP_PATH="${SCRIPTS_BASE_PATH}/NTRIP"
+
+NTRIP_SERVER_INPUT_MODE="2"
+NTRIP_SERVER_OUTPUT_MODE="1"
+NTRIP_SERVER_RECONNECT_DELAY="256"
+
+# informacion del caster
+NTRIP_CASTER_IP="<NTRIP_IP>"
+NTRIP_CASTER_PORT="2101"
+NTRIP_CASTER_PASS="<NTRIP_PASSWORD>"
+NTRIP_CASTER_MOUNTPOINTv2_3="${STNM}-v2.3"
+NTRIP_CASTER_MOUNTPOINTv3_0="${STNM}-v3.0"
+
+# informacion del receptor
+NTRIP_SOURCE_IP="<FTP_IP>"
+NTRIP_SOURCE_PORTv2_3="8000"
+NTRIP_SOURCE_PORTv3_0="8001"
+
+#########################
+# CONFIGURACION DE STATUS
+#########################
+
+STATUS_STATION_NAME="${STNM}"
+STATUS_STATION_CODE="hdgasiHDHOjdhd"
+
+STATUS_SERVER="https://dnsg.ign.gob.ar/apps/api/v1/estaciones/status-receiver?e=$STATUS_STATION_NAME&c=$STATUS_STATION_CODE&s"
+STATUS_UPDATE_RATE=10m
+
+STATUS_RECEIVER_IP="192.168.1.2"
+
+STATUS_RECEIVER_HTTP_PORT="80"
+STATUS_RECEIVER_HTTP_SHIFT=0
+
+STATUS_RECEIVER_FTP_PORT="21"
+STATUS_RECEIVER_FTP_SHIFT=1
+
+STATUS_RECEIVER_NTRIP_2_3_PORT="8000"
+STATUS_RECEIVER_NTRIP_2_3_SHIFT=2
+
+STATUS_RECEIVER_NTRIP_3_0_PORT="8001"
+STATUS_RECEIVER_NTRIP_3_0_SHIFT=3
+
+STATUS_MSG=("Forbidden" \
+			"OK" \
+			"Error 02: HTTP unavailable" \
+			"Error 03: FTP unavailable" \
+			"Error 04: HTTP/FTP unavailable" \
+			"Error 05: NTRIPv2-3 unavailable" \
+			"Error 06: HTTP/NTRIPv2-3 unavailable" \
+			"Error 07: FTP/NTRIPv2-3 unavailable" \
+			"Error 08: HTTP/FTP/NTRIPv2-3 unavailable" \
+			"Error 09: NTRIPv3-0 unavailable" \
+			"Error 10: HTTP/NTRIPv3-0 unavailable" \
+			"Error 11: FTP/NTRIPv3-0 unavailable" \
+			"Error 12: HTTP/FTP/NTRIPv3-0 unavailable" \
+			"Error 13: NTRIPv2-3/NTRIPv3-0 unavailable" \
+			"Error 14: HTTP/NTRIPv2-3/NTRIPv3-0 unavailable" \
+			"Error 15: FTP/NTRIPv2-3/NTRIPv3-0 unavailable" \
+			"Error 16: HTTP/FTP/NTRIPv2-3/NTRIPv3-0 unavailable")
+
+
