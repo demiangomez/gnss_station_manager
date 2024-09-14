@@ -1,9 +1,9 @@
 #!/bin/bash
 #
-# Este script realiza un FTP Pull de los archivos que se encuentran en 
-# $FTP_RECEIVER_IP a la carpeta $FTP_LOCAL_PATH utilizando el programa lftp
-# Permite hasta 3 descargas en paralelo (limitacion del receptor).
-# Para mas informacion del setting: https://lftp.yar.ru/lftp-man.html
+# This script performs an FTP Pull of the files located at 
+# $FTP_RECEIVER_IP to the folder $FTP_LOCAL_PATH using the lftp program.
+# It allows up to 3 parallel downloads (receiver's limitation).
+# For more information on the settings: https://lftp.yar.ru/lftp-man.html
 #
 
 source "/home/pi/scripts/config/global.config"
@@ -11,8 +11,10 @@ source "/home/pi/scripts/config/global.config"
 date "+%Y/%m/%d   %H:%M:%S  PID:$$" 1>> "$LOG_FTP_DOWNLOAD"
 
 if [ -f "$FTP_LOCAL_LIST" ]; then
-	# armo una lista de archivos ya descargados para no volver a descargar lo mismo
-	awk '{print $1}' ${FTP_LOCAL_LIST} > ${SCRIPTS_BASE_PATH}/FTP/exclude.txt
+	# I create a list of already downloaded files to avoid downloading the same files again
+	# DDG: also, include the files that were deleted so we don't download them again
+	cat ${SCRIPTS_BASE_PATH}/FTP/list_deleted >  ${SCRIPTS_BASE_PATH}/FTP/exclude.txt
+	awk '{print $1}' ${FTP_LOCAL_LIST}        >> ${SCRIPTS_BASE_PATH}/FTP/exclude.txt
 else
 	echo "" > ${SCRIPTS_BASE_PATH}/FTP/exclude.txt
 fi
@@ -30,7 +32,6 @@ EOF
 
 echo 1>> "$LOG_FTP_DOWNLOAD"
 
-
-# Usando WGET
-#wget -m -nH -A ."$FTP_RECEIVER_FILE_EXTENTION" ftp://"$FTP_RECEIVER_USER":"$FTP_RECEIVER_PASS"@"$FTP_RECEIVER_IP$FTP_RECEIVER_PATH" \
-#-P "$FTP_LOCAL_PATH" 1>> "$LOG_FTP_DOWNLOAD" 2>> "$LOG_FTP_DOWNLOAD"
+# Using WGET
+# wget -m -nH -A ."$FTP_RECEIVER_FILE_EXTENTION" ftp://"$FTP_RECEIVER_USER":"$FTP_RECEIVER_PASS"@"$FTP_RECEIVER_IP$FTP_RECEIVER_PATH" \
+# -P "$FTP_LOCAL_PATH" 1>> "$LOG_FTP_DOWNLOAD" 2>> "$LOG_FTP_DOWNLOAD"

@@ -1,24 +1,24 @@
 #!/bin/bash
 #
-# Este script tiene toda la configuracion de directorios en un solo lugar.
-# Para ser invocado usando source de forma de tener toda las variables de entorno disponibles
+# This script has all the configuration in one place.
+# To be invoked using source so that all environment variables are available
 #
 
 ##########################
-# CONFIGURACION DE GENERAL
+# GENERAL CONFIGURATION
 ##########################
 
-# ubicacion de los scripts a ejecutar
+# location of the scripts to execute
 SCRIPTS_BASE_PATH="<BASE>"
-# nombre de la estacion
+# name of the station
 STNM=<STNM>
 MET_SERIAL=<MET_SERIAL>
 
 ######################
-# CONFIGURACION DE FTP
+# FTP CONFIGURATION
 ######################
 
-# directorio de archivos
+# directory of files
 FTP_LOCAL_PATH="<FTP_BASE>/${STNM}"
 FTP_LOCAL_LIST="${SCRIPTS_BASE_PATH}/FTP/list_local"
 FTP_UPLOADED_LIST="${SCRIPTS_BASE_PATH}/FTP/list_uploaded"
@@ -38,63 +38,63 @@ FTP_SERVER_PASS="<FTP_PASS>"
 FTP_SERVER_FILE_EXTENTION="T00|gz"
 
 #############################
-# CONFIGURACION DE AUTODELETE
+# AUTODELETE CONFIGURATION
 #############################
 
-# directorio objetivo
+# target directory
 AUTODELETE_PATH="${FTP_LOCAL_PATH}"
 
-# Tamano maximo en MB
+# maximum size in MB
 AUTODELETE_MAX_SIZE=4000
 
 ###########################
-# CONFIGURACION DE LOGFILES
+# LOGFILES CONFIGURATION
 ###########################
 
-# ubicacion de los archivos relacionados con log
+# location of log-related files
 LOG_PATH="${SCRIPTS_BASE_PATH}/log"
 
-# archivo log de los uploads de FTP
+# FTP upload log file
 LOG_FTP_UPLOAD="$LOG_PATH/log_ftp_push.txt"
-# archivo log de los pull del receptor
+# receiver pull log file
 LOG_FTP_DOWNLOAD="$LOG_PATH/log_ftp_pull.txt"
 
-# log para NTRIP
+# NTRIP logs
 LOG_NTRIP_v2_3="$LOG_PATH/log_ntrip-v2_3.txt"
 LOG_NTRIP_v3_0="$LOG_PATH/log_ntrip-v3_0.txt"
 
-# log del status del sistema
+# system status log
 LOG_STATUS="$LOG_PATH/log_status.txt"
 
-# log de autodelete y de initialize
+# autodelete and initialize logs
 LOG_AUTODELETE="$LOG_PATH/log_autodelete.txt"
 LOG_INITIALIZE="$LOG_PATH/log_initialize.txt"
 
 ########################
-# CONFIGURACION DE NTRIP
+# NTRIP CONFIGURATION
 ########################
 
-# directorio de NTRIP
+# NTRIP directory
 NTRIP_PATH="${SCRIPTS_BASE_PATH}/NTRIP"
 
 NTRIP_SERVER_INPUT_MODE="2"
 NTRIP_SERVER_OUTPUT_MODE="1"
 NTRIP_SERVER_RECONNECT_DELAY="256"
 
-# informacion del caster
+# caster information
 NTRIP_CASTER_IP="<NTRIP_IP>"
 NTRIP_CASTER_PORT="2101"
 NTRIP_CASTER_PASS="<NTRIP_PASSWORD>"
 NTRIP_CASTER_MOUNTPOINTv2_3="${STNM}-v2.3"
 NTRIP_CASTER_MOUNTPOINTv3_0="${STNM}-v3.0"
 
-# informacion del receptor
+# receiver information
 NTRIP_SOURCE_IP="<FTP_IP>"
 NTRIP_SOURCE_PORTv2_3="8000"
 NTRIP_SOURCE_PORTv3_0="8001"
 
 #########################
-# CONFIGURACION DE STATUS
+# STATUS CONFIGURATION
 #########################
 
 STATUS_STATION_NAME="${STNM}"
@@ -118,21 +118,20 @@ STATUS_RECEIVER_NTRIP_3_0_PORT="8001"
 STATUS_RECEIVER_NTRIP_3_0_SHIFT=3
 
 STATUS_MSG=("Forbidden" \
-			"OK" \
-			"Error 02: HTTP unavailable" \
-			"Error 03: FTP unavailable" \
-			"Error 04: HTTP/FTP unavailable" \
-			"Error 05: NTRIPv2-3 unavailable" \
-			"Error 06: HTTP/NTRIPv2-3 unavailable" \
-			"Error 07: FTP/NTRIPv2-3 unavailable" \
-			"Error 08: HTTP/FTP/NTRIPv2-3 unavailable" \
-			"Error 09: NTRIPv3-0 unavailable" \
-			"Error 10: HTTP/NTRIPv3-0 unavailable" \
-			"Error 11: FTP/NTRIPv3-0 unavailable" \
-			"Error 12: HTTP/FTP/NTRIPv3-0 unavailable" \
-			"Error 13: NTRIPv2-3/NTRIPv3-0 unavailable" \
-			"Error 14: HTTP/NTRIPv2-3/NTRIPv3-0 unavailable" \
-			"Error 15: FTP/NTRIPv2-3/NTRIPv3-0 unavailable" \
-			"Error 16: HTTP/FTP/NTRIPv2-3/NTRIPv3-0 unavailable")
-
+            "OK" \
+            "Error 02: HTTP unavailable" \
+            "Error 03: FTP unavailable" \
+            "Error 04: HTTP/FTP unavailable" \
+            "Error 05: NTRIPv2-3 unavailable" \
+            "Error 06: HTTP/NTRIPv2-3 unavailable" \
+            "Error 07: FTP/NTRIPv2-3 unavailable" \
+            "Error 08: HTTP/FTP/NTRIPv2-3 unavailable" \
+            "Error 09: NTRIPv3-0 unavailable" \
+            "Error 10: HTTP/NTRIPv3-0 unavailable" \
+            "Error 11: FTP/NTRIPv3-0 unavailable" \
+            "Error 12: HTTP/FTP/NTRIPv3-0 unavailable" \
+            "Error 13: NTRIPv2-3/NTRIPv3-0 unavailable" \
+            "Error 14: HTTP/NTRIPv2-3/NTRIPv3-0 unavailable" \
+            "Error 15: FTP/NTRIPv2-3/NTRIPv3-0 unavailable" \
+            "Error 16: HTTP/FTP/NTRIPv2-3/NTRIPv3-0 unavailable")
 
