@@ -12,6 +12,7 @@
 SCRIPTS_BASE_PATH="<BASE>"
 # name of the station
 STNM=<STNM>
+MET_RUN=NO
 MET_SERIAL=<MET_SERIAL>
 
 ######################
@@ -45,7 +46,7 @@ FTP_SERVER_FILE_EXTENTION="T00|gz"
 AUTODELETE_PATH="${FTP_LOCAL_PATH}"
 
 # maximum size in MB
-AUTODELETE_MAX_SIZE=4000
+AUTODELETE_MAX_SIZE=8000
 
 ###########################
 # LOGFILES CONFIGURATION
@@ -75,6 +76,7 @@ LOG_INITIALIZE="$LOG_PATH/log_initialize.txt"
 ########################
 
 # NTRIP directory
+NTRIP_RUN=NO
 NTRIP_PATH="${SCRIPTS_BASE_PATH}/NTRIP"
 
 NTRIP_SERVER_INPUT_MODE="2"

@@ -6,7 +6,7 @@
 # For more information on the settings: https://lftp.yar.ru/lftp-man.html
 #
 
-source "/home/pi/scripts/config/global.config"
+source "/etc/global.config"
 
 date "+%Y/%m/%d   %H:%M:%S  PID:$$" 1>> "$LOG_FTP_DOWNLOAD"
 

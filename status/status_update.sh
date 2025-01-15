@@ -31,7 +31,7 @@
 #	16) HTTP	FTP		NTRIPv2-3	NTRIPv3-0		unavailables
 
 
-source "/home/pi/scripts/config/global.config"
+source "/etc/global.config"
 
 echo "PID: $$" >> "$LOG_STATUS"
 

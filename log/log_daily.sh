@@ -5,11 +5,18 @@
 # y luego "limpia" dichos archivos.
 #
 
-source "/home/pi/scripts/config/global.config"
+source "/etc/global.config"
 
 # Generacion del nombre del logfile diario
 DATE=$( date "+%Y%m%d" ) 
-LOGFILE="$LOG_PATH/log_$DATE.txt"
+YEAR=echo $( date "+%Y" )
+
+# check if folder exists in order to place files in it
+if [ ! -d "$LOG_PATH/$YEAR" ]; then
+  mkdir "$LOG_PATH/$YEAR"
+fi
+
+LOGFILE="$LOG_PATH/$YEAR/log_$DATE.txt"
 
 # Comienzo del archivo con fecha y hora
 DATE=$(date "+%Y/%m/%d   %H:%M:%S") 

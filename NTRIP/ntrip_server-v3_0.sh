@@ -5,7 +5,7 @@
 # Para mas informacion del setting ver archivo README
 #
 
-source "/home/pi/scripts/config/global.config"
+source "/etc/global.config"
 
 echo "PID: $$" >> "$LOG_NTRIP_v3_0"
 echo >> "$LOG_NTRIP_v3_0"

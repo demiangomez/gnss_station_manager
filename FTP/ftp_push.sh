@@ -8,7 +8,7 @@
 # The lists have a format "<FILENAME> <SIZE in KB>" on each line.
 #
 
-source "/home/pi/scripts/config/global.config"
+source "/etc/global.config"
 
 date "+%Y/%m/%d   %H:%M:%S  PID: $$" 1>> "$LOG_FTP_UPLOAD"
 

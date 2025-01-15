@@ -5,7 +5,7 @@
 # deletes it iteratively until the SIZE is less than AUTODELETE_MAX_SIZE
 #
 
-source "/home/pi/scripts/config/global.config"
+source "/etc/global.config"
 
 # Save datetime
 date "+%Y/%m/%d   %H:%M:%S" 1>> "$LOG_AUTODELETE"
