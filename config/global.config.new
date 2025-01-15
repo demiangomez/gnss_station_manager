@@ -13,7 +13,7 @@ SCRIPTS_BASE_PATH="<BASE>"
 # name of the station
 STNM=<STNM>
 MET_RUN=NO
-MET_SERIAL=<MET_SERIAL>
+MET_SERIAL="<MET_SERIAL>"
 
 ######################
 # FTP CONFIGURATION
