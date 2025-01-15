@@ -25,13 +25,16 @@ folder=`pwd`
 (crontab -l 2>/dev/null; echo "*/10 * * * *    ${folder}/status/status_update.sh") | crontab -
 
 # apply permissions to files
-chomod +x ${folder}/config/initialize.sh
-chomod +x ${folder}/config/update.sh
-chomod +x ${folder}/autodelete/autodelete.sh
-chomod +x ${folder}/FTP/ftp_push.sh
-chomod +x ${folder}/FTP/ftp_pull.sh
-chomod +x ${folder}/NTRIP/ntrip_server-v2_3.sh
-chomod +x ${folder}/NTRIP/ntrip_server-v3_0.sh
-chomod +x ${folder}/NTRIP/ntripserver
-chomod +x ${folder}/log/log_daily.sh
-chomod +x ${folder}/status/status_update.sh
+chmod +x ${folder}/config/initialize.sh
+chmod +x ${folder}/config/update.sh
+chmod +x ${folder}/autodelete/autodelete.sh
+chmod +x ${folder}/FTP/ftp_push.sh
+chmod +x ${folder}/FTP/ftp_pull.sh
+chmod +x ${folder}/NTRIP/ntrip_server-v2_3.sh
+chmod +x ${folder}/NTRIP/ntrip_server-v3_0.sh
+chmod +x ${folder}/NTRIP/ntripserver
+chmod +x ${folder}/log/log_daily.sh
+chmod +x ${folder}/status/status_update.sh
+
+echo "INSTALLATION SUCCEEDED"
+echo "======================"
