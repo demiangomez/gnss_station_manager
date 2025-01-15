@@ -16,12 +16,12 @@ echo "2) The most important setting is SCRIPTS_BASE_PATH which should be set to 
 folder=`pwd`
 
 (crontab -l 2>/dev/null; echo "# m h  dom mon dow   command") | crontab -
-(crontab -l 2>/dev/null; echo "@reboot         ${folder}/scripts/config/initialize.sh") | crontab -
-(crontab -l 2>/dev/null; echo "@daily          ${folder}/scripts/config/update.sh ${folder}") | crontab -
-(crontab -l 2>/dev/null; echo "@daily          ${folder}/scripts/autodelete/autodelete.sh") | crontab -
-(crontab -l 2>/dev/null; echo "@hourly         ${folder}/scripts/FTP/ftp_push.sh") | crontab -
-(crontab -l 2>/dev/null; echo "0 1-23/2 * * *  ${folder}/scripts/FTP/ftp_pull.sh") | crontab -
-(crontab -l 2>/dev/null; echo "59 23 * * *     ${folder}/scripts/log/log_daily.sh") | crontab -
-(crontab -l 2>/dev/null; echo "*/10 * * * *    ${folder}/scripts/status/status_update.sh") | crontab -
+(crontab -l 2>/dev/null; echo "@reboot         ${folder}/config/initialize.sh") | crontab -
+(crontab -l 2>/dev/null; echo "@daily          ${folder}/config/update.sh ${folder}") | crontab -
+(crontab -l 2>/dev/null; echo "@daily          ${folder}/autodelete/autodelete.sh") | crontab -
+(crontab -l 2>/dev/null; echo "@hourly         ${folder}/FTP/ftp_push.sh") | crontab -
+(crontab -l 2>/dev/null; echo "0 1-23/2 * * *  ${folder}/FTP/ftp_pull.sh") | crontab -
+(crontab -l 2>/dev/null; echo "59 23 * * *     ${folder}/log/log_daily.sh") | crontab -
+(crontab -l 2>/dev/null; echo "*/10 * * * *    ${folder}/status/status_update.sh") | crontab -
 
 
