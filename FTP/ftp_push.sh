@@ -15,7 +15,7 @@ date "+%Y/%m/%d   %H:%M:%S  PID: $$" 1>> "$LOG_FTP_UPLOAD"
 # I update the list of filenames in FTP_LOCAL_PATH
 # DDG: there is a conflict with file deletion: the autodelete process deletes files when we hit a limit determined by AUTODELETE_MAX_SIZE.
 #      The local list is regenerated with the files in the directory, which are still in the receiver, so the pull process downloads them again
-#      Thus, this list cannot be regenerated but rather it should  
+#      Now the pull process checks files that were deleted so as to not download them again
 ls --size --block-size=1024 -R "$FTP_LOCAL_PATH" | awk '/'$FTP_SERVER_FILE_EXTENTION'/{ print $2 " " $1 }' > $FTP_LOCAL_LIST
 
 # DDG: check if $FTP_UPLOADED_LIST exists, if not, create it

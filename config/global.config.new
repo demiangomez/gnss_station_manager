@@ -12,6 +12,19 @@
 SCRIPTS_BASE_PATH="<BASE>"
 # name of the station
 STNM=<STNM>
+
+######################
+# SOLAR MONITOR
+######################
+
+# indicate to run solar monitor
+# using Victron SmartSolar controller
+SOLAR_RUN=NO
+
+######################
+# MET CONFIG
+######################
+
 MET_RUN=NO
 MET_SERIAL="<MET_SERIAL>"
 

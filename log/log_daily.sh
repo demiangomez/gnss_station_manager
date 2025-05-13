@@ -9,7 +9,7 @@ source "/etc/global.config"
 
 # Generacion del nombre del logfile diario
 DATE=$( date "+%Y%m%d" ) 
-YEAR=echo $( date "+%Y" )
+YEAR=$( date "+%Y" )
 
 # check if folder exists in order to place files in it
 if [ ! -d "$LOG_PATH/$YEAR" ]; then
@@ -24,7 +24,7 @@ echo "Logging date: $DATE">> "$LOGFILE"
 echo >> "$LOGFILE"
 
 # Log: Initialize
-echo "=========== Log: Initialize ===========" >> "$LOGFILE"
+echo "=========== Log: Initialize =========" >> "$LOGFILE"
 cat "$LOG_INITIALIZE" >> "$LOGFILE"
 echo >> "$LOGFILE"
 
@@ -39,22 +39,22 @@ cat "$LOG_FTP_UPLOAD" >> "$LOGFILE"
 echo >> "$LOGFILE"
 
 # Log: NTRIP Server v2.3
-echo "=========== Log: NTRIP Server v2.3 ===========" >> "$LOGFILE"
+echo "=========== Log: NTRIP Server v2.3 ==" >> "$LOGFILE"
 cat "$LOG_NTRIP_v2_3" >> "$LOGFILE"
 echo >> "$LOGFILE"
 
 # Log: NTRIP Server v3.0
-echo "=========== Log: NTRIP Server v3.0 ===========" >> "$LOGFILE"
+echo "=========== Log: NTRIP Server v3.0 ==" >> "$LOGFILE"
 cat "$LOG_NTRIP_v3_0" >> "$LOGFILE"
 echo >> "$LOGFILE"
 
 # Log: Status
-echo "=========== Log: Status ===========" >> "$LOGFILE"
+echo "=========== Log: Status =============" >> "$LOGFILE"
 cat "$LOG_STATUS" >> "$LOGFILE"
 echo >> "$LOGFILE"
 
 # Log: Autodelete
-echo "=========== Log: Autodelete ===========" >> "$LOGFILE"
+echo "=========== Log: Autodelete =========" >> "$LOGFILE"
 cat "$LOG_AUTODELETE" >> "$LOGFILE"
 echo >> "$LOGFILE"
 
