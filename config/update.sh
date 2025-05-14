@@ -11,9 +11,11 @@ cd $1
 # get installation folder
 folder=`pwd`
 
-echo "Running gnss_station_manager update on `pwd`"
-git reset --hard
+echo "Running gnss_station_manager update on `pwd`" >> "$LOG_STATUS"
+git reset --hard >> "$LOG_STATUS"
 git pull origin >> "$LOG_STATUS"
+echo "Done updating" >> "$LOG_STATUS"
+echo 1>> "$LOG_STATUS"
 
 # apply permissions to files again
 chmod +x ${folder}/config/initialize.sh
