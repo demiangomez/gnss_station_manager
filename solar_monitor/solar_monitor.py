@@ -36,7 +36,7 @@ def load_data(file_path1, file_path2):
             df = pd.read_table(file_path2, sep=',', header=None, names=['Timestamp', 'status', 'NA2', 'Battery Voltage (V)', 'Battery net current (A)', 'Daily Yield (kWh)', 'Instantaneous Power (W)', 'Load Current (A)', 'NA3'])
         
         except FileNotFoundError:
-            return
+            return None
         
     df_cleaned = df.iloc[:, [0, 1, 3, 4, 5, 6, 7]].copy()  # Make an explicit copy to avoid the SettingWithCopyWarning
     df_cleaned.columns = ['Timestamp', 'status', 'Battery Voltage (V)', 'Battery net current (A)', 'Daily Yield (kWh)', 'Instantaneous Power (W)', 'Load Current (A)']
@@ -50,6 +50,9 @@ def load_data(file_path1, file_path2):
 def update_plot(frame, fig, axs, file_location, line_voltage, line_yield, line_power, line_current, line_current_net):
     file_path1, file_path2 = get_file_path(file_location)
     df_cleaned_new = load_data(file_path1, file_path2)
+    
+    if not df_cleaned_new:
+        return line_voltage, line_yield, line_power, line_current
     
     # Filter data for the last 24 hours
     last_timestamp = df_cleaned_new['Timestamp'].max()

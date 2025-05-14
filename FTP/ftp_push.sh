@@ -12,6 +12,11 @@ source "/etc/global.config"
 
 date "+%Y/%m/%d   %H:%M:%S  PID: $$" 1>> "$LOG_FTP_UPLOAD"
 
+# create the station directory if it does not exist
+if [ ! -d "$FTP_LOCAL_PATH" ]; then
+  mkdir -p "$FTP_LOCAL_PATH"
+fi
+
 # I update the list of filenames in FTP_LOCAL_PATH
 # DDG: there is a conflict with file deletion: the autodelete process deletes files when we hit a limit determined by AUTODELETE_MAX_SIZE.
 #      The local list is regenerated with the files in the directory, which are still in the receiver, so the pull process downloads them again

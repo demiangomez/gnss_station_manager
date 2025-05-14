@@ -10,6 +10,14 @@ source "/etc/global.config"
 
 date "+%Y/%m/%d   %H:%M:%S  PID:$$" 1>> "$LOG_FTP_DOWNLOAD"
 
+# wait for any possible processes modifying ${FTP_LOCAL_LIST}
+sleep 10s
+
+# create the station directory if it does not exist
+if [ ! -d "$FTP_LOCAL_PATH" ]; then
+  mkdir -p "$FTP_LOCAL_PATH"
+fi
+
 if [ -f "$FTP_LOCAL_LIST" ]; then
 
 	# DDG: check if list_deleted exists, if not, create it
