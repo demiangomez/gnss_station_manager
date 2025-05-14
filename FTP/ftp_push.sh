@@ -20,7 +20,7 @@ ls --size --block-size=1024 -R "$FTP_LOCAL_PATH" | awk '/'$FTP_SERVER_FILE_EXTEN
 
 # DDG: check if $FTP_UPLOADED_LIST exists, if not, create it
 if [ ! -f "$FTP_UPLOADED_LIST" ]; then
-	touch $FTP_UPLOADED_LIST
+	touch "$FTP_UPLOADED_LIST"
 fi
 
 # List of filenames to upload (those that don't exist or have a different size in the uploaded list)
@@ -34,7 +34,7 @@ do
 	
 	# Uploads the file with LFTP and stores the exit code in the variable 'result'
 	echo "$filename" 1>> "$LOG_FTP_UPLOAD"
-	lftp -u "$FTP_SERVER_USER","$FTP_SERVER_PASS" "$FTP_SERVER_IP" -e "set cmd:verbose true; set ftp:use-feat off; cd ${FTP_SERVER_PATH}; put ${upload_file};bye" >> "$LOG_FTP_UPLOAD" 2>&1
+	lftp -u "$FTP_SERVER_USER","$FTP_SERVER_PASS" "$FTP_SERVER_IP" -e "set cmd:verbose true; set ftp:use-feat off; cd ${FTP_SERVER_PATH}; put ${upload_file}; bye" >> "$LOG_FTP_UPLOAD" 2>&1
 	result=$?
 	if [ $result -eq 0 ]
 	# If the result is 0 (no error), adds the filename to the uploaded list
