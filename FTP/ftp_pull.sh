@@ -39,7 +39,8 @@ lftp -u "$FTP_RECEIVER_USER","$FTP_RECEIVER_PASS" "$FTP_RECEIVER_IP" <<EOF >> "$
 set cmd:verbose true
 set ftp:use-feat off
 set mirror:no-empty-dirs true
-set mirror:skip-noaccess true
+# DDG: this option is making NETR9s fail to transfer
+# set mirror:skip-noaccess true
 set mirror:set-permissions false
 set mirror:parallel-transfer-count $FTP_PARALLEL_PULL
 mirror --verbose=1 -I *.$FTP_RECEIVER_FILE_EXTENTION --exclude-rx-from="${SCRIPTS_BASE_PATH}/FTP/exclude.txt" $FTP_RECEIVER_PATH $FTP_LOCAL_PATH
