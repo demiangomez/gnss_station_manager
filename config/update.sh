@@ -23,6 +23,7 @@ chmod +x ${folder}/config/update.sh
 chmod +x ${folder}/autodelete/autodelete.sh
 chmod +x ${folder}/FTP/ftp_push.sh
 chmod +x ${folder}/FTP/ftp_pull.sh
+chmod +x ${folder}/FTP/force_sync.sh
 chmod +x ${folder}/NTRIP/ntrip_server-v2_3.sh
 chmod +x ${folder}/NTRIP/ntrip_server-v3_0.sh
 chmod +x ${folder}/NTRIP/ntripserver
