@@ -30,22 +30,40 @@ fi
 
 # List of filenames to upload (those that don't exist or have a different size in the uploaded list)
 # See documentation for the 'comm' program
-ftp_upload_list=$( comm -23 <(sort $FTP_LOCAL_LIST) <(sort $FTP_UPLOADED_LIST) | awk '{print $1}' )
+# DDG: added sort | uniq to upload repeated files only once. The issue is that, when reprogramming a GNSS receiver
+#      the directory structure might change leading to two files with the same name. sort | uniq prevents conflicts between 
+#      files with same names in different directories
+ftp_upload_list=$( comm -23 <(sort $FTP_LOCAL_LIST) <(sort $FTP_UPLOADED_LIST) | sort | uniq | awk '{print $1}' )
 
-for filename in $ftp_upload_list
+echo "List of files to upload:" >> "$LOG_FTP_UPLOAD"
+echo $ftp_upload_list | tr ' ' '\n' >> "$LOG_FTP_UPLOAD"
+
+for file_list in $ftp_upload_list
 do
 	# Searches for the file and retrieves the path
-	upload_file=$( find "$FTP_LOCAL_PATH" -name "$filename" -type f -printf '%p' )
+	# this search might lead to a single file or multiple files, depending on the dir structure
+	upload_list=$( find "$FTP_LOCAL_PATH" -name "$file_list" -type f)
 	
-	# Uploads the file with LFTP and stores the exit code in the variable 'result'
-	echo "$filename" 1>> "$LOG_FTP_UPLOAD"
-	lftp -u "$FTP_SERVER_USER","$FTP_SERVER_PASS" "$FTP_SERVER_IP" -e "set cmd:verbose true; set ftp:use-feat off; cd ${FTP_SERVER_PATH}; put ${upload_file}; bye" >> "$LOG_FTP_UPLOAD" 2>&1
-	result=$?
-	if [ $result -eq 0 ]
-	# If the result is 0 (no error), adds the filename to the uploaded list
-	then
-		ls --size --block-size=1024 "$upload_file" | awk '{ print "'$filename'" " " $1 }' >> "$FTP_UPLOADED_LIST"	
-	fi
+	for filename in $upload_list
+    do
+	    # Uploads the file with LFTP and stores the exit code in the variable 'result'
+	    echo "-----------------------------------------" 1>> "$LOG_FTP_UPLOAD"
+	    echo "about to upload $filename" 1>> "$LOG_FTP_UPLOAD"
+	    
+	    lftp -u "$FTP_SERVER_USER","$FTP_SERVER_PASS" "$FTP_SERVER_IP" <<EOF >> "$LOG_FTP_UPLOAD" 2>&1
+        set cmd:verbose true
+        set ftp:use-feat off
+        cd ${FTP_SERVER_PATH}
+        put ${filename}
+        bye
+EOF
+	    result=$?
+	    if [ $result -eq 0 ]
+	    # If the result is 0 (no error), adds the filename to the uploaded list
+	    then
+		    ls --size --block-size=1024 "$filename" | awk '{ print "'$file_list'" " " $1 }' >> "$FTP_UPLOADED_LIST"	
+	    fi
+    done
 done
 echo 1>> "$LOG_FTP_UPLOAD"
 
