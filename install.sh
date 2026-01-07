@@ -23,6 +23,7 @@ folder=`pwd`
 (crontab -l 2>/dev/null; echo "0 1-23/2 * * *  ${folder}/FTP/ftp_pull.sh") | crontab -
 (crontab -l 2>/dev/null; echo "59 23 * * *     ${folder}/log/log_daily.sh") | crontab -
 (crontab -l 2>/dev/null; echo "*/10 * * * *    ${folder}/status/status_update.sh") | crontab -
+(crontab -l 2>/dev/null; echo "*/5 * * * *     ${folder}/internet_check/internet_check.sh") | crontab -
 
 # apply permissions to files
 chmod +x ${folder}/config/initialize.sh
@@ -35,6 +36,7 @@ chmod +x ${folder}/NTRIP/ntrip_server-v3_0.sh
 chmod +x ${folder}/NTRIP/ntripserver
 chmod +x ${folder}/log/log_daily.sh
 chmod +x ${folder}/status/status_update.sh
+chmod +x ${folder}/internet_check/internet_check.sh
 
 echo "INSTALLATION SUCCEEDED"
 echo "======================"

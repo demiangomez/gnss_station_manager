@@ -150,3 +150,16 @@ STATUS_MSG=("Forbidden" \
             "Error 15: FTP/NTRIPv2-3/NTRIPv3-0 unavailable" \
             "Error 16: HTTP/FTP/NTRIPv2-3/NTRIPv3-0 unavailable")
 
+#############################
+# INTERNET CHECK CONFIGURATION
+#############################
+
+# Hosts to ping (Google, Cloudflare, Quad9 DNS)
+INTERNET_CHECK_HOSTS="8.8.8.8 1.1.1.1 9.9.9.9"
+# Ping timeout in seconds
+INTERNET_CHECK_TIMEOUT=5
+# Reboot after this many consecutive failures
+INTERNET_CHECK_MAX_FAILURES=5
+# Log file
+LOG_INTERNET_CHECK="$LOG_PATH/log_internet_check.txt"
+

@@ -58,6 +58,11 @@ echo "=========== Log: Autodelete =========" >> "$LOGFILE"
 cat "$LOG_AUTODELETE" >> "$LOGFILE"
 echo >> "$LOGFILE"
 
+# Log: Internet Check
+echo "=========== Log: Internet Check =====" >> "$LOGFILE"
+cat "$LOG_INTERNET_CHECK" >> "$LOGFILE"
+echo >> "$LOGFILE"
+
 # Finalizacion del archivo con fecha y hora
 DATE=$(date "+%Y/%m/%d   %H:%M:%S")
 echo "End logging date: $DATE">> "$LOGFILE"
@@ -71,4 +76,5 @@ truncate -s 0 	"$LOG_INITIALIZE" \
 				"$LOG_NTRIP_v2_3" \
 				"$LOG_NTRIP_v3_0" \
 				"$LOG_STATUS" \
-				"$LOG_AUTODELETE"
+				"$LOG_AUTODELETE" \
+				"$LOG_INTERNET_CHECK"

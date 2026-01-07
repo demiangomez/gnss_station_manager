@@ -7,3 +7,4 @@
 0 1-23/2 * * *  /home/pi/scripts/FTP/ftp_pull.sh
 59 23 * * *     /home/pi/scripts/log/log_daily.sh
 */10 * * * *    /home/pi/scripts/status/status_update.sh
+*/5 * * * *     /home/pi/scripts/internet_check/internet_check.sh
