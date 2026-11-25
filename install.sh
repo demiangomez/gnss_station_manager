@@ -38,5 +38,15 @@ chmod +x ${folder}/log/log_daily.sh
 chmod +x ${folder}/status/status_update.sh
 chmod +x ${folder}/internet_check/internet_check.sh
 
+# systemd keeps petting the Pi's hardware watchdog; if the system freezes for 15s (the BCM2835 maximum) the board resets itself
+sudo mkdir -p /etc/systemd/system.conf.d
+printf '[Manager]\nRuntimeWatchdogSec=15\n' | sudo tee /etc/systemd/system.conf.d/gnss-station-watchdog.conf > /dev/null
+sudo systemctl daemon-reexec
+if [ -e /dev/watchdog ]; then
+    echo "Hardware watchdog enabled (timeout $(systemctl show -p RuntimeWatchdogUSec --value))"
+else
+    echo "WARNING: no hardware watchdog device (/dev/watchdog) found, freeze recovery is NOT active"
+fi
+
 echo "INSTALLATION SUCCEEDED"
 echo "======================"

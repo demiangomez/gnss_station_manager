@@ -17,17 +17,11 @@ To install the GNSS station manager, cd into the folder where you cloned the rep
 ```
 ./install.sh
 ```
-It is recommended to also install the watchdog, which is done separately. Execute the install script in the watchdog folder and after the installation process run 
-```
-./watchdog
-```
-and follow apply the parameters:
-1. Set your preffered Watchdog timer period. ("5" recommended)
-2. Set your reboot Watchdog timer period. This should be significantly longer than the Watchdog timer ("1min" recommended)
-3. Set the software-based Watchdog settings. This watchdog timer is primarily concerned with the average load over a set period of time.
-4. Confirm your settings
-5. Done! You can check to see if it was indeed updated by opening the system.conf file in /etc/systemd/
-6. Perform a test to double check the function of the timer in a safe environment.
+The install script also enables the Raspberry Pi's hardware watchdog: if the system freezes for 15 seconds, the board reboots itself. The setting lives in `/etc/systemd/system.conf.d/gnss-station-watchdog.conf`; delete that file and reboot to turn it off.
 
-To perform the tests, follow the directions found here: https://github.com/nick10mc/WatchdogUpdater
+To test the watchdog on a bench Pi (never on a deployed station), force a kernel crash:
+```
+sudo sh -c 'echo c > /proc/sysrq-trigger'
+```
+The Pi should reboot on its own about 15 seconds later.
 
