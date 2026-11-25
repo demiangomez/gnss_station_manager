@@ -40,6 +40,11 @@ check_internet() {
             return 0
         fi
     done
+    # Last resort for networks that block public DNS servers; timeout also bounds the DNS lookup, which nc -w doesn't
+    if [ -n "$FTP_SERVER_IP" ] && timeout 10 nc -z -w 3 "$FTP_SERVER_IP" 21 > /dev/null 2>&1; then
+        echo "Public hosts unreachable, but FTP server $FTP_SERVER_IP is reachable" >> "$LOG_INTERNET_CHECK"
+        return 0
+    fi
     return 1
 }
 
