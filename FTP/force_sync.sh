@@ -35,16 +35,22 @@ fi
 
 # List of filenames to upload (those that don't exist or have a different size in the uploaded list)
 # See documentation for the 'comm' program
-ftp_upload_list=$( comm -23 <(sort $FTP_LOCAL_LIST) <(sort $FTP_UPLOADED_LIST) | awk '{print $1}' )
+# DDG: sort | uniq for the same reason as in ftp_push.sh: reprogramming a receiver can
+#      leave two files with the same name in different directories
+ftp_upload_list=$( comm -23 <(sort $FTP_LOCAL_LIST) <(sort $FTP_UPLOADED_LIST) | sort | uniq | awk '{print $1}' )
 
 for filename in $ftp_upload_list
 do
-	# Searches for the file and retrieves the path
-	upload_file=$( find "$FTP_LOCAL_PATH" -name "$filename" -type f -printf '%p' )
-	
-	# Uploads the file with LFTP and stores the exit code in the variable 'result'
-	echo "syncing $filename" 1>> "$LOG_FTP_UPLOAD"
-    ls --size --block-size=1024 "$upload_file" | awk '{ print "'$filename'" " " $1 }' >> "$FTP_UPLOADED_LIST"	
+	# Searches for the file and retrieves the path. As in ftp_push.sh this can match
+	# several files: -printf '%p' used to run them together into one unusable path,
+	# so none of them was recorded and they were synced again on the next run
+	upload_list=$( find "$FTP_LOCAL_PATH" -name "$filename" -type f )
+
+	for upload_file in $upload_list
+	do
+		echo "syncing $upload_file" 1>> "$LOG_FTP_UPLOAD"
+		ls --size --block-size=1024 "$upload_file" | awk '{ print "'$filename'" " " $1 }' >> "$FTP_UPLOADED_LIST"
+	done
 
 done
 echo 1>> "$LOG_FTP_UPLOAD"

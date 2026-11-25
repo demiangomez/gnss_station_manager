@@ -68,7 +68,13 @@ FTP=$?
 
 # Envio de mensaje segun estado
 echo "Sending status code $STATUS - ${STATUS_MSG[$STATUS]}" >> "$LOG_STATUS"
-curl "$STATUS_SERVER"="$STATUS"
+# --max-time so a stalled server cannot hang the job until the next one starts 10 minutes
+# later; -s -o keeps the response body and the progress meter out of cron's mail
+curl --max-time 30 -s -o /dev/null "$STATUS_SERVER"="$STATUS"
+result=$?
+if [ $result -ne 0 ]; then
+	echo "WARNING: could not send the status update (curl exit $result)" >> "$LOG_STATUS"
+fi
 echo >> "$LOG_STATUS"
 
 # sleep $STATUS_UPDATE_RATE

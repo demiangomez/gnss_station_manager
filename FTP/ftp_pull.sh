@@ -33,12 +33,15 @@ if [ -f "$FTP_LOCAL_LIST" ]; then
 	fi
 	# I create a list of already downloaded files to avoid downloading the same files again
 	# DDG: also, include the files that were deleted so we don't download them again
-	cat ${SCRIPTS_BASE_PATH}/FTP/list_deleted >  ${SCRIPTS_BASE_PATH}/FTP/exclude.txt
-	awk '{print $1}' ${FTP_LOCAL_LIST}        >> ${SCRIPTS_BASE_PATH}/FTP/exclude.txt
+	# Every line is a regex for lftp's --exclude-rx-from, and a blank line is a regex that
+	# matches every file: one of them would silently stop the station from downloading
+	grep -v '^[[:space:]]*$' ${SCRIPTS_BASE_PATH}/FTP/list_deleted >  ${SCRIPTS_BASE_PATH}/FTP/exclude.txt
+	awk '{print $1}' ${FTP_LOCAL_LIST} | grep -v '^[[:space:]]*$'  >> ${SCRIPTS_BASE_PATH}/FTP/exclude.txt
 	# DDG: logging that file is created
 	echo "exclude file created from list_deleted and ${FTP_LOCAL_LIST}" >> "$LOG_FTP_DOWNLOAD"
 else
-	echo "" > ${SCRIPTS_BASE_PATH}/FTP/exclude.txt
+	# truncate instead of echo "": that wrote a blank line, which excludes everything
+	: > ${SCRIPTS_BASE_PATH}/FTP/exclude.txt
 	echo "empty exclude file created" >> "$LOG_FTP_DOWNLOAD"
 fi
 

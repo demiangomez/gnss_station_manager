@@ -25,9 +25,9 @@ ${SCRIPTS_BASE_PATH}/FTP/ftp_pull.sh &
 ${SCRIPTS_BASE_PATH}/FTP/ftp_push.sh &
 
 if [ "$MET_RUN" = "YES" ]; then
-	python ${SCRIPTS_BASE_PATH}/met/wxReceive.py --name ${STNM} --session 1440 --country ARG --dir ${FTP_LOCAL_PATH} --interval 5 --serial ${MET_SERIAL} >> ${LOG_PATH}/log_wx.txt 2>&1 &
+	python3 ${SCRIPTS_BASE_PATH}/met/wxReceive.py --name ${STNM} --session 1440 --country ARG --dir ${FTP_LOCAL_PATH} --interval 5 --serial ${MET_SERIAL} >> ${LOG_PATH}/log_wx.txt 2>&1 &
 fi
 
 if [ "$SOLAR_RUN" = "YES" ]; then
-	python ${SCRIPTS_BASE_PATH}/solar_monitor/solar_monitor.py 2>&1 &
+	python3 ${SCRIPTS_BASE_PATH}/solar_monitor/solar_monitor.py >> ${LOG_PATH}/log_solar.txt 2>&1 &
 fi

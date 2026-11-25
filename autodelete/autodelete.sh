@@ -26,10 +26,18 @@ while [ $SIZE -gt $AUTODELETE_MAX_SIZE ]
 do	
 	# A list of all files is generated, sorted, and the first one in the list (oldest) is obtained
 	OLDEST_FILE=$( find $AUTODELETE_PATH -type f -printf '%T+ %p\n' | sort | awk 'NR==1{print $2}' )
-	
+
+	# Nothing left to delete: SIZE can no longer change, so without this the loop would
+	# spin forever writing a blank line to list_deleted on every pass, and that blank line
+	# is a regex that makes ftp_pull.sh exclude every file from the mirror
+	if [ -z "$OLDEST_FILE" ]; then
+		echo "Size is still above the limit but there are no files left to delete" >> "$LOG_AUTODELETE"
+		break
+	fi
+
 	# Delete file and save its name
 	echo "Deleting $OLDEST_FILE" >> "$LOG_AUTODELETE"
-	echo $(basename ${OLDEST_FILE}) >> ${SCRIPTS_BASE_PATH}/FTP/list_deleted
+	echo $(basename "${OLDEST_FILE}") >> ${SCRIPTS_BASE_PATH}/FTP/list_deleted
 	rm "$OLDEST_FILE"
 	
 	# update size (in MB)
