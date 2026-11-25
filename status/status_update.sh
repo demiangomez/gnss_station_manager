@@ -43,9 +43,9 @@ date "+%Y/%m/%d   %H:%M:%S  raspberry $( vcgencmd measure_temp )" >> "$LOG_STATU
 # netcat -z: 	Zero-I/O mode [used for scanning]
 # 				Devuelve "0" en caso de exito o "1" en caso de error
 #				Los valores de salida se obtienen con "$?"
-nc -z "$STATUS_RECEIVER_IP" "$STATUS_RECEIVER_HTTP_PORT"
+nc -w 5 -z "$STATUS_RECEIVER_IP" "$STATUS_RECEIVER_HTTP_PORT"
 HTTP=$?
-nc -z "$STATUS_RECEIVER_IP" "$STATUS_RECEIVER_FTP_PORT"
+nc -w 5 -z "$STATUS_RECEIVER_IP" "$STATUS_RECEIVER_FTP_PORT"
 FTP=$?
 #nc -z "$STATUS_RECEIVER_IP" "$STATUS_RECEIVER_NTRIP_2_3_PORT"
 #NTRIP_2_3=$?

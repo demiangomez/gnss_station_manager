@@ -3,7 +3,7 @@
 # This script installs the dependencies and configures the basic parameters for the package
 #
 
-sudo apt install lftp python3-matplotlib python3-pandas
+sudo apt install lftp python3-matplotlib python3-pandas netcat-openbsd
 
 echo "Welcome to the installation of Station Manager"
 echo "=============================================="

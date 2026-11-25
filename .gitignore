@@ -115,3 +115,6 @@ log/log_initialize.txt
 log/log_ntrip-v2_3.txt
 log/log_ntrip-v3_0.txt
 log/log_status.txt
+log/log_internet_check.txt
+internet_check/failure_count
+internet_check/reboot_count
