@@ -48,6 +48,8 @@ fi
 lftp -u "$FTP_RECEIVER_USER","$FTP_RECEIVER_PASS" "$FTP_RECEIVER_IP" <<EOF >> "$LOG_FTP_DOWNLOAD" 2>&1
 set cmd:verbose true
 set ftp:use-feat off
+# Stop at the first failed command instead of carrying on to the mirror
+set cmd:fail-exit true
 set mirror:no-empty-dirs true
 # DDG: this option is making NETR9s fail to transfer
 # set mirror:skip-noaccess true

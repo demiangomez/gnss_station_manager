@@ -60,6 +60,9 @@ do
 	    lftp -u "$FTP_SERVER_USER","$FTP_SERVER_PASS" "$FTP_SERVER_IP" <<EOF >> "$LOG_FTP_UPLOAD" 2>&1
         set cmd:verbose true
         set ftp:use-feat off
+        # Without this a failed cd still runs the put, so the file lands in the server's
+        # default directory, lftp exits 0 and we record it as uploaded and never retry
+        set cmd:fail-exit true
         cd ${FTP_SERVER_PATH}
         put ${filename}
         bye
