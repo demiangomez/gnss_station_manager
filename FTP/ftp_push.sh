@@ -12,6 +12,13 @@ source "/etc/global.config"
 
 date "+%Y/%m/%d   %H:%M:%S  PID: $$" 1>> "$LOG_FTP_UPLOAD"
 
+# On a fresh station this runs before anyone fills in /etc/global.config, and the
+# mkdir below would create a literal "<FTP_BASE>/<STNM>" directory
+if ! "${SCRIPTS_BASE_PATH}/config/config_ready.sh"; then
+  echo "Station not configured yet: /etc/global.config still has <> placeholders, skipping" >> "$LOG_FTP_UPLOAD"
+  exit 0
+fi
+
 # create the station directory if it does not exist
 if [ ! -d "$FTP_LOCAL_PATH" ]; then
   mkdir -p "$FTP_LOCAL_PATH"

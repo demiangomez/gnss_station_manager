@@ -35,6 +35,13 @@ source "/etc/global.config"
 
 echo "PID: $$" >> "$LOG_STATUS"
 
+# STATUS_STATION_NAME is STNM, so an unconfigured station would report itself to the
+# IGN server as "<STNM>" every 10 minutes
+if ! "${SCRIPTS_BASE_PATH}/config/config_ready.sh"; then
+	echo "Station not configured yet: /etc/global.config still has <> placeholders, skipping" >> "$LOG_STATUS"
+	exit 0
+fi
+
 STATUS=0
 
 # Registro de fecha y hora y temperatura del raspberry pi

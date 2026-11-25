@@ -104,6 +104,8 @@ chmod +x ${folder}/log/log_daily.sh
 chmod +x ${folder}/status/status_update.sh
 chmod +x ${folder}/internet_check/internet_check.sh
 chmod +x ${folder}/config/enable_watchdog.sh
+chmod +x ${folder}/config/config_ready.sh
+chmod +x ${folder}/FTP/force_sync.sh
 
 # A station without a working watchdog is still usable, so this only warns
 if ! ${folder}/config/enable_watchdog.sh; then

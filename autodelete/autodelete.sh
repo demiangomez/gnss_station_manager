@@ -11,6 +11,12 @@ source "/etc/global.config"
 date "+%Y/%m/%d   %H:%M:%S" 1>> "$LOG_AUTODELETE"
 echo 1>> "$LOG_AUTODELETE"
 
+# AUTODELETE_PATH is FTP_LOCAL_PATH, so on a fresh station it is still "<FTP_BASE>/<STNM>"
+if ! "${SCRIPTS_BASE_PATH}/config/config_ready.sh"; then
+  echo "Station not configured yet: /etc/global.config still has <> placeholders, skipping" >> "$LOG_AUTODELETE"
+  exit 0
+fi
+
 # get folder size (in MB)
 SIZE=$( du -s -B 1M $AUTODELETE_PATH | cut -f1 )
 

@@ -10,6 +10,13 @@ source "/etc/global.config"
 
 date "+%Y/%m/%d   %H:%M:%S  PID:$$" 1>> "$LOG_FTP_DOWNLOAD"
 
+# On a fresh station this runs before anyone fills in /etc/global.config, and the
+# mkdir below would create a literal "<FTP_BASE>/<STNM>" directory
+if ! "${SCRIPTS_BASE_PATH}/config/config_ready.sh"; then
+  echo "Station not configured yet: /etc/global.config still has <> placeholders, skipping" >> "$LOG_FTP_DOWNLOAD"
+  exit 0
+fi
+
 # wait for any possible processes modifying ${FTP_LOCAL_LIST}
 sleep 10s
 

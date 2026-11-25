@@ -54,6 +54,7 @@ chmod +x ${folder}/status/status_update.sh
 chmod +x ${folder}/internet_check/internet_check.sh
 chmod +x ${folder}/config/enable_watchdog.sh
 chmod +x ${folder}/config/enable_nopasswd_sudo.sh
+chmod +x ${folder}/config/config_ready.sh
 
 # --no-remove: apt aborts instead of uninstalling anything; long timeout since killing dpkg mid-run needs manual repair
 if ! command -v nc >/dev/null 2>&1; then
