@@ -17,6 +17,13 @@ git pull origin >> "$LOG_STATUS"
 echo "Done updating" >> "$LOG_STATUS"
 echo 1>> "$LOG_STATUS"
 
+# Every sudo here is -n, so without passwordless sudo the update still succeeds but
+# nothing that needs root takes effect and internet_check.sh cannot reboot the station
+if ! sudo -n true 2>/dev/null; then
+    echo "WARNING: `id -un` has no passwordless sudo on this station" >> "$LOG_STATUS"
+    echo "         Run ${folder}/config/enable_nopasswd_sudo.sh by hand (it asks for the password once)" >> "$LOG_STATUS"
+fi
+
 # /etc/global.config is only written at install time, so older stations lack this section
 if ! grep -q "^INTERNET_CHECK_HOSTS=" /etc/global.config 2>/dev/null; then
     echo "Adding INTERNET_CHECK configuration to /etc/global.config" >> "$LOG_STATUS"
@@ -45,6 +52,8 @@ chmod +x ${folder}/NTRIP/ntripserver
 chmod +x ${folder}/log/log_daily.sh
 chmod +x ${folder}/status/status_update.sh
 chmod +x ${folder}/internet_check/internet_check.sh
+chmod +x ${folder}/config/enable_watchdog.sh
+chmod +x ${folder}/config/enable_nopasswd_sudo.sh
 
 # --no-remove: apt aborts instead of uninstalling anything; long timeout since killing dpkg mid-run needs manual repair
 if ! command -v nc >/dev/null 2>&1; then

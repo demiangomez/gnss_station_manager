@@ -71,11 +71,19 @@ else
     echo "Internet FAILED (attempt $FAILURE_COUNT of $THRESHOLD)" >> "$LOG_INTERNET_CHECK"
 
     if [ "$FAILURE_COUNT" -ge "$THRESHOLD" ]; then
-        echo "Max failures reached. Rebooting system (reboot $((REBOOT_COUNT + 1)) since internet was last up)..." >> "$LOG_INTERNET_CHECK"
-        echo "0" > "$FAILURE_COUNT_FILE"
-        echo "$((REBOOT_COUNT + 1))" > "$REBOOT_COUNT_FILE"
-        sync
-        sudo reboot
+        # Checked before the counters are written, and before reboot is issued: the system
+        # can go down mid-write, and a lost reboot count would restart the backoff and loop.
+        # -n because cron has no terminal for sudo to ask for a password on.
+        if ! sudo -n true 2>/dev/null; then
+            echo "ERROR: cannot reboot, $(id -un) has no passwordless sudo on this station." >> "$LOG_INTERNET_CHECK"
+            echo "       Run ${SCRIPTS_BASE_PATH}/config/enable_nopasswd_sudo.sh to fix it. Until then this check only logs." >> "$LOG_INTERNET_CHECK"
+        else
+            echo "Max failures reached. Rebooting system (reboot $((REBOOT_COUNT + 1)) since internet was last up)..." >> "$LOG_INTERNET_CHECK"
+            echo "0" > "$FAILURE_COUNT_FILE"
+            echo "$((REBOOT_COUNT + 1))" > "$REBOOT_COUNT_FILE"
+            sync
+            sudo -n reboot >> "$LOG_INTERNET_CHECK" 2>&1
+        fi
     fi
 fi
 
