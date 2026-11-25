@@ -34,9 +34,32 @@ sudo apt install lftp python3-matplotlib python3-pandas netcat-openbsd
 echo "Welcome to the installation of Station Manager"
 echo "=============================================="
 echo ""
-echo "To install the software, you must follow the next steps:"
-echo "1) In the config folder, copy global.config.new to /etc/global.config and setup all the sections that are needed."
-echo "2) The most important setting is SCRIPTS_BASE_PATH which should be set to the installation dir. Everything that needs a setting is between <>"
+
+# SCRIPTS_BASE_PATH is the one setting already known at this point, so it is filled in
+# here. An existing /etc/global.config is never overwritten: it holds the station's
+# credentials and re-running the installer must not wipe them.
+if [ -e /etc/global.config ]; then
+    echo "/etc/global.config already exists, left untouched"
+    if ! grep -qF "SCRIPTS_BASE_PATH=\"${folder}\"" /etc/global.config; then
+        echo "WARNING: it has `grep '^SCRIPTS_BASE_PATH=' /etc/global.config`, but this installation is in ${folder}"
+    fi
+else
+    # Written through a temporary file to land it root-owned and group-readable in one
+    # step: it carries the FTP and NTRIP passwords, and only the station user reads it
+    tmp_config=`mktemp`
+    sed "s|^SCRIPTS_BASE_PATH=.*|SCRIPTS_BASE_PATH=\"${folder}\"|" ${folder}/config/global.config.new > "$tmp_config"
+    if sudo install -m 0640 -o root -g `id -gn` "$tmp_config" /etc/global.config; then
+        echo "Created /etc/global.config with SCRIPTS_BASE_PATH=\"${folder}\""
+    else
+        echo "ERROR: could not create /etc/global.config" >&2
+    fi
+    rm -f "$tmp_config"
+fi
+
+echo ""
+echo "Settings you still have to fill in by hand in /etc/global.config:"
+grep -n "<[A-Z_]*>" /etc/global.config | sed 's/^/    /'
+echo ""
 
 # The crontab is built in a variable and written once, adding only the jobs that are
 # missing: re-running install.sh on an installed station would otherwise schedule every

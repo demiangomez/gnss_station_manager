@@ -11,7 +11,7 @@
 # location of the scripts to execute
 SCRIPTS_BASE_PATH="<BASE>"
 # name of the station
-STNM=<STNM>
+STNM="<STNM>"
 
 ######################
 # SOLAR MONITOR

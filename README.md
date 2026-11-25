@@ -17,6 +17,8 @@ To install the GNSS station manager, cd into the folder where you cloned the rep
 ```
 ./install.sh
 ```
+The installer creates `/etc/global.config` from `config/global.config.new` with `SCRIPTS_BASE_PATH` already set to the installation folder, and then lists the settings that still have to be filled in by hand — station name, FTP and NTRIP details. An existing `/etc/global.config` is never overwritten, so re-running the installer can't wipe a configured station; it warns instead if that file points at a different installation folder. Until you fill in the remaining `<>` settings the cron jobs run against an unconfigured station: they log errors and do nothing, which is harmless, but the station is not operational.
+
 Run it as the station user, not with `sudo`: the cron jobs go into the crontab of whoever runs it. The user does need to be able to use `sudo`, and the first thing the install does is give that user passwordless sudo through `/etc/sudoers.d/010_<user>-nopasswd`. The unattended jobs depend on it, because cron gives `sudo` no terminal to ask for a password on: without it `internet_check.sh` can never reboot a station whose link has gone down, and `update.sh` can't write `/etc/global.config`.
 
 Stations installed before this change may be missing that rule. To check one, run `sudo -n true` as the station user; if it prints an error, run `config/enable_nopasswd_sudo.sh` from the installation folder (it asks for the password once and does nothing if the rule is already there). `update.sh` also logs a warning to the status log on every station that is missing it.
