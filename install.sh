@@ -38,15 +38,35 @@ echo "To install the software, you must follow the next steps:"
 echo "1) In the config folder, copy global.config.new to /etc/global.config and setup all the sections that are needed."
 echo "2) The most important setting is SCRIPTS_BASE_PATH which should be set to the installation dir. Everything that needs a setting is between <>"
 
-(crontab -l 2>/dev/null; echo "# m h  dom mon dow   command") | crontab -
-(crontab -l 2>/dev/null; echo "@reboot         ${folder}/config/initialize.sh") | crontab -
-(crontab -l 2>/dev/null; echo "@daily          ${folder}/config/update.sh ${folder}") | crontab -
-(crontab -l 2>/dev/null; echo "@daily          ${folder}/autodelete/autodelete.sh") | crontab -
-(crontab -l 2>/dev/null; echo "@hourly         ${folder}/FTP/ftp_push.sh") | crontab -
-(crontab -l 2>/dev/null; echo "0 1-23/2 * * *  ${folder}/FTP/ftp_pull.sh") | crontab -
-(crontab -l 2>/dev/null; echo "59 23 * * *     ${folder}/log/log_daily.sh") | crontab -
-(crontab -l 2>/dev/null; echo "*/10 * * * *    ${folder}/status/status_update.sh") | crontab -
-(crontab -l 2>/dev/null; echo "*/5 * * * *     ${folder}/internet_check/internet_check.sh") | crontab -
+# The crontab is built in a variable and written once, adding only the jobs that are
+# missing: re-running install.sh on an installed station would otherwise schedule every
+# job a second time, which starts two of each @reboot process and makes internet_check.sh
+# count failures twice per interval
+current_cron=`crontab -l 2>/dev/null`
+new_cron="$current_cron"
+
+add_cron_job() {
+    # $1: script path, matched against the existing crontab; $2: line to add if missing
+    if grep -qF "$1" <<< "$new_cron"; then
+        echo "crontab already runs $1, left untouched"
+    else
+        new_cron=`printf '%s\n%s' "$new_cron" "$2"`
+    fi
+}
+
+grep -qF "dom mon dow" <<< "$new_cron" || new_cron=`printf '%s\n%s' "$new_cron" "# m h  dom mon dow   command"`
+add_cron_job "config/initialize.sh"             "@reboot         ${folder}/config/initialize.sh"
+add_cron_job "config/update.sh"                 "@daily          ${folder}/config/update.sh ${folder}"
+add_cron_job "autodelete/autodelete.sh"         "@daily          ${folder}/autodelete/autodelete.sh"
+add_cron_job "FTP/ftp_push.sh"                  "@hourly         ${folder}/FTP/ftp_push.sh"
+add_cron_job "FTP/ftp_pull.sh"                  "0 1-23/2 * * *  ${folder}/FTP/ftp_pull.sh"
+add_cron_job "log/log_daily.sh"                 "59 23 * * *     ${folder}/log/log_daily.sh"
+add_cron_job "status/status_update.sh"          "*/10 * * * *    ${folder}/status/status_update.sh"
+add_cron_job "internet_check/internet_check.sh" "*/5 * * * *     ${folder}/internet_check/internet_check.sh"
+
+if [ "$new_cron" != "$current_cron" ]; then
+    printf '%s\n' "$new_cron" | crontab -
+fi
 
 # apply permissions to files
 chmod +x ${folder}/config/initialize.sh
