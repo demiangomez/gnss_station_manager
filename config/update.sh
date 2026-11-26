@@ -98,13 +98,17 @@ chmod +x ${folder}/config/enable_watchdog.sh
 chmod +x ${folder}/config/enable_nopasswd_sudo.sh
 chmod +x ${folder}/config/config_ready.sh
 
-# --no-remove: apt aborts instead of uninstalling anything; long timeout since killing dpkg mid-run needs manual repair
+# --no-remove: apt aborts instead of uninstalling anything. The timeout is only there to
+# stop an indefinite hang, waiting on a lock another apt holds, so it is generous: the
+# man-db trigger alone runs for minutes on a Pi's SD card, and killing dpkg part way
+# through leaves the package system needing "sudo dpkg --configure -a" by hand.
 if ! command -v nc >/dev/null 2>&1; then
     echo "netcat not found, installing netcat-openbsd" >> "$LOG_STATUS"
-    if timeout 600 sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-remove netcat-openbsd >> "$LOG_STATUS" 2>&1; then
+    if timeout 3600 sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-remove netcat-openbsd >> "$LOG_STATUS" 2>&1; then
         echo "netcat-openbsd installed successfully" >> "$LOG_STATUS"
     else
-        echo "WARNING: failed to install netcat-openbsd" >> "$LOG_STATUS"
+        echo "WARNING: failed to install netcat-openbsd. If it was killed part way through," >> "$LOG_STATUS"
+        echo "         run 'sudo dpkg --configure -a' on this station before anything else" >> "$LOG_STATUS"
     fi
 fi
 
