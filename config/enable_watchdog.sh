@@ -34,7 +34,9 @@ sudo systemctl daemon-reexec
 
 # Checked against the kernel, not the journal: systemd logs the hardware watchdog when it
 # opens the device at boot, so a re-exec can arm it without printing anything to the journal
-CONFIGURED=$(systemctl show -p RuntimeWatchdogUSec --value 2>/dev/null)
+# "systemctl show -p X" and cut, not "--value": that flag does not exist on the systemd of
+# the oldest stations, where it fails and leaves the value looking unreadable
+CONFIGURED=$(systemctl show -p RuntimeWatchdogUSec 2>/dev/null | cut -d= -f2-)
 # The device PID 1 actually opened, which is what arms the hardware. It can be
 # /dev/watchdog or /dev/watchdog0 depending on the board and the kernel.
 WATCHDOG_DEV=$(sudo ls -l /proc/1/fd 2>/dev/null | grep -o '/dev/watchdog[0-9]*' | head -1)
