@@ -16,25 +16,35 @@ folder=`pwd`
 update_before=`md5sum "${folder}/config/update.sh" 2>/dev/null`
 
 echo "Running gnss_station_manager update on `pwd`" >> "$LOG_STATUS"
-# 2>&1 on both: git writes its errors to stderr, so a pull that printed "Updating a..b"
-# and then aborted (an untracked file in the way, a full disk) used to leave a log that
-# was indistinguishable from a successful update
-git reset --hard >> "$LOG_STATUS" 2>&1
-if git pull origin >> "$LOG_STATUS" 2>&1; then
+
+# fetch and reset instead of pull, because the repo is the source of truth. git pull
+# refuses to overwrite an untracked file, so a station that had a script hand-copied into
+# it before that script was committed stayed on its old commit for months while its log
+# still said "Done updating". reset --hard takes those files over and leaves everything
+# git does not track, the station logs and data, alone.
+# 2>&1 on each: git writes its errors to stderr, and without it a failure left a log that
+# was indistinguishable from a successful update.
+upstream=`git rev-parse --abbrev-ref --symbolic-full-name @{u} 2>/dev/null`
+if [ -z "$upstream" ]; then
+    upstream="origin/main"
+fi
+echo "Updating to $upstream" >> "$LOG_STATUS"
+
+if git fetch origin >> "$LOG_STATUS" 2>&1 && git reset --hard "$upstream" >> "$LOG_STATUS" 2>&1; then
     echo "Done updating" >> "$LOG_STATUS"
 else
-    echo "ERROR: git pull failed, the station is still at the version below" >> "$LOG_STATUS"
+    echo "ERROR: could not update, the station is still at the version below" >> "$LOG_STATUS"
 fi
 # Always record where the station actually ended up
 git log --oneline -1 >> "$LOG_STATUS" 2>&1
 echo 1>> "$LOG_STATUS"
 
-# Everything below runs from the copy of this script that cron started, so when the pull
+# Everything below runs from the copy of this script that cron started, so when the update
 # changed it, hand over to the new version and let that one deploy the release. The second
-# run pulls again, which is a no-op, and GNSS_UPDATE_REEXEC keeps it to a single handover.
+# run fetches again, which is a no-op, and GNSS_UPDATE_REEXEC keeps it to a single handover.
 update_after=`md5sum "${folder}/config/update.sh" 2>/dev/null`
 if [ -z "$GNSS_UPDATE_REEXEC" ] && [ "$update_before" != "$update_after" ] && [ -x "${folder}/config/update.sh" ]; then
-    echo "update.sh changed in this pull, re-running the new version" >> "$LOG_STATUS"
+    echo "update.sh changed in this update, re-running the new version" >> "$LOG_STATUS"
     export GNSS_UPDATE_REEXEC=1
     exec "${folder}/config/update.sh" "$folder"
 fi
