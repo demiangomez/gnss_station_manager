@@ -35,20 +35,33 @@ sudo systemctl daemon-reexec
 # Checked against the kernel, not the journal: systemd logs the hardware watchdog when it
 # opens the device at boot, so a re-exec can arm it without printing anything to the journal
 CONFIGURED=$(systemctl show -p RuntimeWatchdogUSec --value 2>/dev/null)
-HELD_BY_INIT=$(sudo ls -l /proc/1/fd 2>/dev/null | grep -c "/dev/watchdog")
-STATE=$(cat ${WATCHDOG_SYS}/state 2>/dev/null)
-TIMEOUT=$(cat ${WATCHDOG_SYS}/timeout 2>/dev/null)
+# The device PID 1 actually opened, which is what arms the hardware. It can be
+# /dev/watchdog or /dev/watchdog0 depending on the board and the kernel.
+WATCHDOG_DEV=$(sudo ls -l /proc/1/fd 2>/dev/null | grep -o '/dev/watchdog[0-9]*' | head -1)
 
 echo "systemd RuntimeWatchdogUSec: ${CONFIGURED:-unknown}"
-echo "Device ${WATCHDOG_SYS}: state=${STATE:-unknown}, timeout=${TIMEOUT:-unknown}"
 
-if [ "$CONFIGURED" != "15s" ] || [ "${HELD_BY_INIT:-0}" -eq 0 ]; then
-    echo "ERROR: the watchdog is NOT armed: systemd reports a ${CONFIGURED:-unknown} timeout and PID 1 does not hold /dev/watchdog." >&2
+# sysfs is extra evidence only: the entry is not always watchdog0, and kernels older than
+# the ones on recent stations do not expose the watchdog class at all
+WATCHDOG_SYS=""
+if [ -n "$WATCHDOG_DEV" ] && [ -d "/sys/class/watchdog/$(basename $WATCHDOG_DEV)" ]; then
+    WATCHDOG_SYS="/sys/class/watchdog/$(basename $WATCHDOG_DEV)"
+else
+    WATCHDOG_SYS=$(ls -d /sys/class/watchdog/watchdog* 2>/dev/null | head -1)
+fi
+if [ -n "$WATCHDOG_SYS" ] && [ -r "${WATCHDOG_SYS}/state" ]; then
+    echo "Device ${WATCHDOG_SYS}: state=$(cat ${WATCHDOG_SYS}/state), timeout=$(cat ${WATCHDOG_SYS}/timeout 2>/dev/null)"
+else
+    echo "Device details: this kernel does not expose the watchdog class in sysfs, which does not affect the check below"
+fi
+
+if [ "$CONFIGURED" != "15s" ] || [ -z "$WATCHDOG_DEV" ]; then
+    echo "ERROR: the watchdog is NOT armed: systemd reports a ${CONFIGURED:-unknown} timeout and PID 1 does not hold a watchdog device." >&2
     echo "       The station will not recover on its own from a freeze. Check 'systemctl show -p RuntimeWatchdogUSec' and 'sudo ls -l /proc/1/fd'." >&2
     exit 1
 fi
 
-echo "Watchdog armed: PID 1 holds /dev/watchdog with a 15s timeout, the board resets itself if the system freezes."
+echo "Watchdog armed: PID 1 holds ${WATCHDOG_DEV} and systemd is set to reset the board after 15s without a ping."
 echo ""
 echo "To test it on a bench Pi (NEVER on a deployed station), force a kernel freeze:"
 echo "    sudo sh -c 'echo c > /proc/sysrq-trigger'"
