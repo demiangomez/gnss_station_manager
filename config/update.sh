@@ -16,9 +16,17 @@ folder=`pwd`
 update_before=`md5sum "${folder}/config/update.sh" 2>/dev/null`
 
 echo "Running gnss_station_manager update on `pwd`" >> "$LOG_STATUS"
-git reset --hard >> "$LOG_STATUS"
-git pull origin >> "$LOG_STATUS"
-echo "Done updating" >> "$LOG_STATUS"
+# 2>&1 on both: git writes its errors to stderr, so a pull that printed "Updating a..b"
+# and then aborted (an untracked file in the way, a full disk) used to leave a log that
+# was indistinguishable from a successful update
+git reset --hard >> "$LOG_STATUS" 2>&1
+if git pull origin >> "$LOG_STATUS" 2>&1; then
+    echo "Done updating" >> "$LOG_STATUS"
+else
+    echo "ERROR: git pull failed, the station is still at the version below" >> "$LOG_STATUS"
+fi
+# Always record where the station actually ended up
+git log --oneline -1 >> "$LOG_STATUS" 2>&1
 echo 1>> "$LOG_STATUS"
 
 # Everything below runs from the copy of this script that cron started, so when the pull
