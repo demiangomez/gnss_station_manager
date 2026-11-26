@@ -104,11 +104,16 @@ chmod +x ${folder}/config/config_ready.sh
 # through leaves the package system needing "sudo dpkg --configure -a" by hand.
 if ! command -v nc >/dev/null 2>&1; then
     echo "netcat not found, installing netcat-openbsd" >> "$LOG_STATUS"
-    if timeout 3600 sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-remove netcat-openbsd >> "$LOG_STATUS" 2>&1; then
+    timeout 3600 sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-remove netcat-openbsd >> "$LOG_STATUS" 2>&1
+    apt_result=$?
+    if [ $apt_result -eq 0 ]; then
         echo "netcat-openbsd installed successfully" >> "$LOG_STATUS"
+    elif [ $apt_result -eq 124 ]; then
+        # timeout's own exit code: the package may well be installed and only a trigger left over
+        echo "WARNING: the netcat install was still running after an hour and was killed." >> "$LOG_STATUS"
+        echo "         Run 'sudo dpkg --configure -a' on this station before anything else" >> "$LOG_STATUS"
     else
-        echo "WARNING: failed to install netcat-openbsd. If it was killed part way through," >> "$LOG_STATUS"
-        echo "         run 'sudo dpkg --configure -a' on this station before anything else" >> "$LOG_STATUS"
+        echo "WARNING: failed to install netcat-openbsd (apt exit $apt_result)" >> "$LOG_STATUS"
     fi
 fi
 
