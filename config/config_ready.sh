@@ -16,7 +16,9 @@
 source "/etc/global.config" 2>/dev/null
 
 for value in "$STNM" "$FTP_LOCAL_PATH"; do
+    # Empty counts as not configured too: /etc/global.config can be missing altogether,
+    # and an empty path is no safer to hand to mkdir, find or lftp than a placeholder
     case "$value" in
-        *"<"*">"*) exit 1 ;;
+        ""|*"<"*">"*) exit 1 ;;
     esac
 done

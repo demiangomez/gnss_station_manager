@@ -2,17 +2,27 @@
 #
 # Update the scripts using git
 #
-source "/etc/global.config"
-
-date "+%Y/%m/%d   %H:%M:%S  PID:$$" >> "$LOG_STATUS"
+source "/etc/global.config" 2>/dev/null
 
 cd $1
 
 # get installation folder
 folder=`pwd`
 
-# Fingerprint this script before the pull: cron started the copy that was on disk, so a
-# step added by the pull below would otherwise sit unused until tomorrow's run
+# The update is how a fix reaches a broken station, so it has to work even when
+# /etc/global.config is missing or has not been filled in. With LOG_STATUS unset every
+# redirection below fails, and in bash a failed redirection means the command does not run
+# at all: git would never be executed and the station could never update itself again.
+if [ -z "$LOG_STATUS" ]; then
+    mkdir -p "${folder}/log" 2>/dev/null
+    LOG_STATUS="${folder}/log/log_status.txt"
+    echo "WARNING: /etc/global.config is missing or sets no LOG_STATUS, logging here instead" >> "$LOG_STATUS"
+fi
+
+date "+%Y/%m/%d   %H:%M:%S  PID:$$" >> "$LOG_STATUS"
+
+# Fingerprint this script before the update: cron started the copy that was on disk, so a
+# step added by the update below would otherwise sit unused until tomorrow's run
 update_before=`md5sum "${folder}/config/update.sh" 2>/dev/null`
 
 echo "Running gnss_station_manager update on `pwd`" >> "$LOG_STATUS"
