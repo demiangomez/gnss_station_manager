@@ -23,7 +23,7 @@ Run it as the station user, not with `sudo`: the cron jobs go into the crontab o
 
 Stations installed before this change may be missing that rule. To check one, run `sudo -n true` as the station user; if it prints an error, run `config/enable_nopasswd_sudo.sh` from the installation folder (it asks for the password once and does nothing if the rule is already there). `update.sh` also logs a warning to the status log on every station that is missing it.
 
-The install script also enables the Raspberry Pi's hardware watchdog: if the system freezes for 15 seconds, the board reboots itself. The setting lives in `/etc/systemd/system.conf.d/gnss-station-watchdog.conf`; delete that file and reboot to turn it off.
+The install script also enables the Raspberry Pi's hardware watchdog: if the system freezes for 15 seconds, the board reboots itself. The setting lives in `/etc/systemd/system.conf.d/gnss-station-watchdog.conf`; delete that file and reboot to turn it off. The systemd on the oldest stations (215, on Raspbian jessie) ignores that directory, so there the script falls back to setting `RuntimeWatchdogSec=15` in `/etc/systemd/system.conf` itself — on those, comment that line out instead.
 
 Stations installed before this change don't get the watchdog automatically. To enable it on one, run `config/enable_watchdog.sh` from the installation folder. It also switches off the watchdog daemon installed by the old separate watchdog installer, if present.
 

@@ -37,6 +37,22 @@ sudo systemctl daemon-reexec
 # "systemctl show -p X" and cut, not "--value": that flag does not exist on the systemd of
 # the oldest stations, where it fails and leaves the value looking unreadable
 CONFIGURED=$(systemctl show -p RuntimeWatchdogUSec 2>/dev/null | cut -d= -f2-)
+
+# The systemd on the oldest stations (215, on Raspbian jessie) ignores
+# /etc/systemd/system.conf.d altogether: the drop-in is written and the value stays 0.
+# Fall back to the file that systemd does read there. This edits a packaged config file,
+# so a distribution upgrade would ask about it, which is why it is not the default path.
+if [ "$CONFIGURED" != "15s" ]; then
+    echo "The drop-in had no effect on this systemd, setting RuntimeWatchdogSec in /etc/systemd/system.conf"
+    sudo sed -i 's|^#\?RuntimeWatchdogSec=.*|RuntimeWatchdogSec=15|' /etc/systemd/system.conf
+    # the stock file always ships the setting commented out, but do not rely on it:
+    # [Manager] is the only section, so appending lands in the right place
+    grep -q '^RuntimeWatchdogSec=15$' /etc/systemd/system.conf ||
+        printf 'RuntimeWatchdogSec=15\n' | sudo tee -a /etc/systemd/system.conf > /dev/null
+    sudo systemctl daemon-reexec
+    CONFIGURED=$(systemctl show -p RuntimeWatchdogUSec 2>/dev/null | cut -d= -f2-)
+fi
+
 # The device PID 1 actually opened, which is what arms the hardware. It can be
 # /dev/watchdog or /dev/watchdog0 depending on the board and the kernel.
 WATCHDOG_DEV=$(sudo ls -l /proc/1/fd 2>/dev/null | grep -o '/dev/watchdog[0-9]*' | head -1)
